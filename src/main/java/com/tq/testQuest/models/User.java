@@ -19,6 +19,22 @@ public class User {
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Username should contain only alphanumeric characters")
     private String username;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Column
     private String name;
 }
