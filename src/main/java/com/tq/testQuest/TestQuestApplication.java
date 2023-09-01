@@ -1,4 +1,4 @@
-package com.tq.testQuest.services;
+package com.tq.testQuest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
