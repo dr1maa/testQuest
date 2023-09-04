@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,6 +25,7 @@ public class UserController {
         User registeredUser = userService.registerUser(user);
         return ResponseEntity.ok(registeredUser);
     }
+
 
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
