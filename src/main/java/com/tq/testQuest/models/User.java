@@ -1,7 +1,7 @@
 package com.tq.testQuest.models;
 
 import com.tq.testQuest.models.Enum.Role;
-import org.springframework.security.core.GrantedAuthority;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

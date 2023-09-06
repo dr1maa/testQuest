@@ -1,13 +1,16 @@
 package com.tq.testQuest.controllers;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+@RestController
+@RequestMapping("/api/movies")
 public class MovieController {
     private final OkHttpClient client;
     private final ObjectMapper objectMapper;
@@ -23,9 +26,7 @@ public class MovieController {
     }
 
     void getMovie() throws IOException {
-//        OkHttpClient client = new OkHttpClient();
-
-
+        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc")
                 .get()
@@ -34,6 +35,7 @@ public class MovieController {
                 .build();
 
         Response response = client.newCall(request).execute();
+
         if (response.isSuccessful()){
             String responseBody = response.body().string();
         } else {

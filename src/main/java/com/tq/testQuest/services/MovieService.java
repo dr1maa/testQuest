@@ -10,17 +10,23 @@ public class MovieService {
     @Autowired
     MovieRepository movieRepository;
 
-    public Movie saveMovie(Movie movie) {
-        if (movie.getTitle().isEmpty())
-            throw new RuntimeException("фильм уже сохранен");
+    public Movie saveMovie(String title, String posterPath) {
+        if (title.isEmpty() || posterPath.isEmpty()) {
+            throw new RuntimeException("Недостаточно данных для сохранения фильма");
+        }
+
+        Movie movie = new Movie();
+        movie.setTitle(title);
+        movie.setPosterPath(posterPath);
+
         return movieRepository.save(movie);
     }
 
-    public Movie deliteMovie(Movie movie) {
-        if (movie.getTitle().isEmpty())
-            throw new RuntimeException("фильм не найден");
-        movieRepository.delete(movie);
-        return null;
-    }
+    public void deleteMovie(Long movieId) {
+        if (!movieRepository.existsById(movieId)) {
+            throw new RuntimeException("Фильм не найден");
+        }
 
+        movieRepository.deleteById(movieId);
+    }
 }

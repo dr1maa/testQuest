@@ -10,7 +10,7 @@ public class Movie {
 
     @Column(nullable = false, unique = true)
     private String title;
-    private String poster_path;
+    private String posterPath;
     private boolean notInFavorites; // Добавляем поле notInFavorites
 
     public boolean isNotInFavorites() {
@@ -33,15 +33,15 @@ public class Movie {
         this.title = title;
     }
 
-    public String getPoster_path() {
-        return poster_path;
+    public String getPosterPath() {
+        return posterPath;
     }
 
-    public void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
-    public Movie(Long id) {
+    public Movie() {
         this.id = id;
     }
 
@@ -49,6 +49,8 @@ public class Movie {
     public Movie(Long id, String title, String poster_path) {
         this.id = id;
         this.title = title;
-        this.poster_path = poster_path;
+        this.posterPath = poster_path;
     }
+
+
 }
