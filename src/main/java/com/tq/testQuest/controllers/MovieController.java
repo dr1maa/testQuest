@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,16 +34,16 @@ public class MovieController {
         this.savedMovieTitles = new HashSet<>();
     }
 
-    //    // Запланированный метод для получения фильмов каждые 3 часа
-//    @Scheduled(fixedRate = 3 * 60 * 60 * 1000) // 3 часа в миллисекундах
-//    void fetchMoviesAndSave() throws IOException {
-//        for (int page = 1; page <= 5; page++) {
-//            fetchAndSaveMoviesFromPage(page);
-//        }
-//    }
-private void saveMovie(String title,String posterPath){
+        // Запланированный метод для получения фильмов каждые 3 часа
+    @Scheduled(fixedRate = 3 * 60 * 60 * 1000) // 3 часа в миллисекундах
+    void fetchMoviesAndSave() throws IOException {
+        for (int page = 1; page <= 5; page++) {
+            fetchAndSaveMoviesFromPage(page);
+        }
+    }
+public void saveMovie(String title,String posterPath){
         Movie movie = new Movie();
-        Movie.setTitle(title);
+        movie.setTitle(title);
         movie.setPosterPath(posterPath);
         movieRepository.save(movie);
 }
@@ -86,6 +87,7 @@ private void saveMovie(String title,String posterPath){
                 if (!savedMovieTitles.contains(title)) {
 
                     savedMovieTitles.add(title);
+                    saveMovie(title,posterPath);
 
                 }
             }
