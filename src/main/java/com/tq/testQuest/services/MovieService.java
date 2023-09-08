@@ -20,6 +20,10 @@ public interface MovieService {
     FavoriteMovie findFavoriteMovie(User user, Movie movie);
 
     void addToFavorites(User user, Movie movie);
+
     void removeFromFavorites(User user, Movie movie);
+
+    void saveMovieToDatabase(String title, String posterPath);
+
     List<Movie> getNonFavoriteMovies(User user, Pageable pageable, String loaderType);
 }

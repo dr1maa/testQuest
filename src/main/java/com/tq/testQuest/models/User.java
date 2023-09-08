@@ -6,7 +6,6 @@ import com.tq.testQuest.models.Enum.Role;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -13,18 +13,20 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final FavoriteMovieRepository favoriteMovieRepository;
-    private final UserRepository userRepository;
+
+
 
     @Autowired
-    public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository, MovieService movieService) {
         this.movieRepository = movieRepository;
         this.favoriteMovieRepository = favoriteMovieRepository;
-        this.userRepository = userRepository;
+
     }
 
     @Override
@@ -69,6 +71,7 @@ public class MovieServiceImpl implements MovieService {
     public void addToFavorites(User user, Movie movie) {
         favoriteMovieRepository.save(new FavoriteMovie(user, movie));
     }
+
     @Override
     public void removeFromFavorites(User user, Movie movie) {
         FavoriteMovie existingFavorite = favoriteMovieRepository.findByUserAndMovie(user, movie);
@@ -76,10 +79,38 @@ public class MovieServiceImpl implements MovieService {
             favoriteMovieRepository.delete(existingFavorite);
         }
     }
+    @Override
+    public void saveMovieToDatabase(String title, String posterPath) {
+        Movie movie = new Movie();
+        movie.setTitle(title);
+        movie.setPosterPath(posterPath);
+        movieRepository.save(movie);
+    }
 
     @Override
     public List<Movie> getNonFavoriteMovies(User user, Pageable pageable, String loaderType) {
-        return null;
-    }
+        if ("inMemory".equals(loaderType)) {
+            List<Movie> allMovies = movieRepository.findAll();
+            List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findByUser(user);
 
+            List<Movie> nonFavoriteMovies = allMovies.stream()
+                    .filter(movie -> favoriteMovies.stream()
+                            .noneMatch(favoriteMovie -> favoriteMovie.getMovie().equals(movie)))
+                    .collect(Collectors.toList());
+
+            int start = Math.min(pageable.getPageNumber() * pageable.getPageSize(), nonFavoriteMovies.size());
+            int end = Math.min(start + pageable.getPageSize(), nonFavoriteMovies.size());
+
+            return nonFavoriteMovies.subList(start, end);
+        } else if ("sql".equals(loaderType)) {
+            List<Movie> favoriteMovies = favoriteMovieRepository.findFavoriteMoviesByUserId(user.getId());
+            if (favoriteMovies.isEmpty()) {
+                return movieRepository.findNonFavoriteMoviesByUser(user.getId(), pageable);
+            } else {
+                return (List<Movie>) movieRepository.findNonFavoriteMovies(user.getId(), pageable);
+            }
+        } else {
+            throw new IllegalArgumentException("Неподдерживаемый тип загрузки: " + loaderType);
+        }
+    }
 }
