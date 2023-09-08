@@ -40,7 +40,7 @@ public class MovieJob {
 
 
     private void fetchAndSaveMoviesFromPage(int page) throws IOException {
-        Response response = discoverClient.getResponse();
+        Response response = discoverClient.response();
 
 
         if (response.isSuccessful()) {
