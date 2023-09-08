@@ -1,7 +1,7 @@
 package com.tq.testQuest.controllers;
 
 import com.tq.testQuest.models.User;
-import com.tq.testQuest.services.UserService;
+import com.tq.testQuest.services.UserServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
 
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
+        User registeredUser = userServiceImpl.registerUser(user);
         return ResponseEntity.ok(registeredUser);
     }
 
@@ -28,21 +28,21 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
         String username = authentication.getName();
-        User user = userService.getUserByUsername(username);
+        User user = userServiceImpl.getUserByUsername(username);
         return ResponseEntity.ok(user);
     }
 
     @PutMapping("/me")
     public ResponseEntity<User> updateCurrentUser(@RequestBody User updatedUser, Authentication authentication) {
         String username = authentication.getName();
-        User user = userService.updateUserByUsername(username, updatedUser);
+        User user = userServiceImpl.updateUserByUsername(username, updatedUser);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteCurrentUser(Authentication authentication) {
         String username = authentication.getName();
-        userService.deleteUserByUsername(username);
+        userServiceImpl.deleteUserByUsername(username);
         return ResponseEntity.noContent().build();
     }
 }

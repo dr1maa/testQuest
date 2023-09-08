@@ -17,6 +17,11 @@ public class FavoriteMovie {
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
+    public FavoriteMovie(User user, Movie movie) {
+        this.user = user;
+        this.movie = movie;
+    }
+
     public Long getId() {
         return id;
     }

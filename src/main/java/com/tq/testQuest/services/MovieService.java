@@ -1,32 +1,25 @@
 package com.tq.testQuest.services;
 
+import com.tq.testQuest.models.FavoriteMovie;
 import com.tq.testQuest.models.Movie;
-import com.tq.testQuest.repositories.MovieRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.tq.testQuest.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-@Service
-public class MovieService {
-    @Autowired
-    MovieRepository movieRepository;
+import java.util.List;
 
-    public Movie saveMovie(String title, String posterPath) {
-        if (title.isEmpty() || posterPath.isEmpty()) {
-            throw new RuntimeException("Недостаточно данных для сохранения фильма");
-        }
+public interface MovieService {
+    Movie saveMovie(String title, String posterPath);
 
-        Movie movie = new Movie();
-        movie.setTitle(title);
-        movie.setPosterPath(posterPath);
+    Page<Movie> getAllMovies(Pageable pageable);
 
-        return movieRepository.save(movie);
-    }
+    Movie deleteMovie(Long movieId);
 
-    public void deleteMovie(Long movieId) {
-        if (!movieRepository.existsById(movieId)) {
-            throw new RuntimeException("Фильм не найден");
-        }
+    Movie findById(Long movieId);
 
-        movieRepository.deleteById(movieId);
-    }
+    FavoriteMovie findFavoriteMovie(User user, Movie movie);
+
+    void addToFavorites(User user, Movie movie);
+    void removeFromFavorites(User user, Movie movie);
+    List<Movie> getNonFavoriteMovies(User user, Pageable pageable, String loaderType);
 }
