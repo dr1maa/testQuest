@@ -35,7 +35,7 @@ public class MovieJob {
     }
 
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 3 * 60 * 60 * 1000)
     void fetchMoviesAndSave() throws IOException {
         for (int page = 1; page <= 5; page++) {
             fetchAndSaveMoviesFromPage(page);
@@ -44,7 +44,7 @@ public class MovieJob {
 
 
     private void fetchAndSaveMoviesFromPage(int page) throws IOException {
-        Response response = discoverClient.discoverClient();
+        Response response = discoverClient.fetchDiscoverData();
 
 
         if (response.isSuccessful()) {
@@ -58,18 +58,19 @@ public class MovieJob {
     private void saveMoviesFromResponse(String responseBody) {
         try {
             JsonNode jsonNode = objectMapper.readTree(responseBody);
-            if (jsonNode.has("results") && !jsonNode.get("results").isNull()) {
-                JsonNode results = jsonNode.get("results");
+
+            JsonNode results = jsonNode.get("results");
+
+            if (results != null && results.isArray()) {
                 for (JsonNode movieNode : results) {
                     String title = movieNode.get("title").asText();
+
                     String posterPath = movieNode.get("poster_path").asText();
+
                     if (!savedMovieTitles.contains(title)) {
                         savedMovieTitles.add(title);
                         movieService.saveMovieToDatabase(title, posterPath);
                     }
-                }
-                if (results.isEmpty()) {
-                    System.err.println("Результаты (results) отсутствуют или равны null в ответе API.");
                 }
             }
         } catch (JsonMappingException e) {
