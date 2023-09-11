@@ -17,16 +17,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class MovieServiceImpl implements MovieService {
+    @Autowired
     private final MovieRepository movieRepository;
+    @Autowired
+    private final UserRepository userRepository;
+    @Autowired
     private final FavoriteMovieRepository favoriteMovieRepository;
 
 
-
     @Autowired
-    public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository, MovieService movieService) {
+    public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository) {
         this.movieRepository = movieRepository;
         this.favoriteMovieRepository = favoriteMovieRepository;
-
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -79,6 +82,7 @@ public class MovieServiceImpl implements MovieService {
             favoriteMovieRepository.delete(existingFavorite);
         }
     }
+
     @Override
     public void saveMovieToDatabase(String title, String posterPath) {
         Movie movie = new Movie();

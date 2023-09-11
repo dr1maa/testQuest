@@ -20,5 +20,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     Page<Movie> findNonFavoriteMovies(@Param("user") Long user, Pageable pageable);
 
 
-    List<Movie> findNonFavoriteMoviesByUser(Long id, Pageable pageable);
+    List<Movie> findNonFavoriteMoviesByUser(Long user, Pageable pageable);
 }

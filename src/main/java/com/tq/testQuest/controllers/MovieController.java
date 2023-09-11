@@ -39,7 +39,7 @@ public class MovieController {
     }
 
     @PostMapping("/addToFavorites")
-    public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") Long userId, @RequestBody Long movieId) {
+    public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
         User user = userService.findById(userId);
         if (movie == null || user == null) {
@@ -54,7 +54,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/removeFromFavorites")
-    public ResponseEntity<String> removeFromFavorites(@RequestHeader("User-Id") Long userId, @RequestBody Long movieId) {
+    public ResponseEntity<String> removeFromFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
         User user = userService.findById(userId);
         if (movie == null || user == null) {
@@ -70,7 +70,7 @@ public class MovieController {
 
     @GetMapping("/nonFavoriteMovies")
     public ResponseEntity<List<Movie>> getNonFavoriteMovies(
-            @RequestHeader("User-Id") Long userId,
+            @RequestHeader("User-Id") User userId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int perPage,
             @RequestParam String loaderType
@@ -80,7 +80,7 @@ public class MovieController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         Pageable pageable = PageRequest.of(page - 1, perPage);
-        List<Movie> nonFavoriteMovies = movieService.getNonFavoriteMovies(user, pageable, loaderType);
+        List<Movie> nonFavoriteMovies = movieService.getNonFavoriteMovies(userId, pageable, loaderType);
         if (nonFavoriteMovies == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
