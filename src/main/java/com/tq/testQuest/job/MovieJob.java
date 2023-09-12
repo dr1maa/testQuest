@@ -4,15 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tq.testQuest.models.Movie;
 import com.tq.testQuest.repositories.MovieRepository;
 import com.tq.testQuest.services.MovieService;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -64,12 +67,19 @@ public class MovieJob {
             if (results != null && results.isArray()) {
                 for (JsonNode movieNode : results) {
                     String title = movieNode.get("title").asText();
-
                     String posterPath = movieNode.get("poster_path").asText();
 
-                    if (!savedMovieTitles.contains(title)) {
-                        savedMovieTitles.add(title);
-                        movieService.saveMovieToDatabase(title, posterPath);
+                    Optional<Movie> existingMovieOptional = movieRepository.findByTitle(title);
+
+                    if (existingMovieOptional.isPresent()) {
+                        Movie existingMovie = existingMovieOptional.get();
+                        existingMovie.setPosterPath(posterPath);
+                        movieRepository.save(existingMovie);
+                    } else {
+                        Movie newMovie = new Movie();
+                        newMovie.setTitle(title);
+                        newMovie.setPosterPath(posterPath);
+                        movieRepository.save(newMovie);
                     }
                 }
             }

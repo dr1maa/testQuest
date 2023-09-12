@@ -38,7 +38,7 @@ public class MovieController {
         return ResponseEntity.ok(savedMoviesPage.getContent());
     }
 
-    @PostMapping("/addToFavorites")
+    @PostMapping("/favourites post")
     public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
         User user = userService.findById(userId);
@@ -53,7 +53,7 @@ public class MovieController {
         return ResponseEntity.ok("Фильм успешно добавлен в избранное");
     }
 
-    @DeleteMapping("/removeFromFavorites")
+    @DeleteMapping("/favourites delete")
     public ResponseEntity<String> removeFromFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
         User user = userService.findById(userId);
