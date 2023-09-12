@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Пользователь с этим именем пользователя уже существует!");
         }
 
-        // Устанавливаем роль ROLE_USER по умолчанию
         Set<Role> roles = new HashSet<>();
         roles.add(Role.ROLE_USER);
         user.setRoles(roles);
