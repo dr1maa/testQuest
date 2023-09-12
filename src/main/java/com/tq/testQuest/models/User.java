@@ -29,11 +29,30 @@ public class User {
 
     @Column
     private String password;
+
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
+
+    public User() {
+
+        this.id = null;
+    }
+
+
+    public User(Long id, String email, String username, String name, String password, Set<Role> roles) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.name = name;
+        this.password = password;
+        this.roles = roles;
+    }
+    public String getPassword() {
+        return password;
+    }
 
     public boolean isAdmin() {
         return roles.contains(Role.ROLE_ADMIN);
@@ -66,13 +85,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public User(Long id, String email, String username, String name) {
-        this.id = id;
-        this.email = email;
-        this.username = username;
-        this.name = name;
     }
 
     public void setEmail(String email) {
