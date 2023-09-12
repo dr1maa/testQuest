@@ -54,10 +54,6 @@ public class User {
         return password;
     }
 
-    public boolean isAdmin() {
-        return roles.contains(Role.ROLE_ADMIN);
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }

@@ -33,18 +33,9 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Пользователь с этим именем пользователя уже существует!");
         }
 
+        // Устанавливаем роль ROLE_USER по умолчанию
         Set<Role> roles = new HashSet<>();
-        for (Role roleName : user.getRoles()) {
-            Role role;
-            if ("ROLE_USER".equals(roleName)) {
-                role = Role.ROLE_USER;
-            } else if ("ROLE_ADMIN".equals(roleName)) {
-                role = Role.ROLE_ADMIN;
-            } else {
-                throw new IllegalArgumentException("Недопустимая роль: " + roleName);
-            }
-            roles.add(role);
-        }
+        roles.add(Role.ROLE_USER);
         user.setRoles(roles);
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());

@@ -5,7 +5,7 @@ import com.tq.testQuest.models.Enum.Role;
 
 
 public enum Role implements GrantedAuthority {
-    ROLE_USER, ROLE_ADMIN;
+    ROLE_USER;
 
     @Override
     public String getAuthority() {
