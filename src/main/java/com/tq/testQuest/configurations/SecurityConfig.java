@@ -3,6 +3,7 @@ package com.tq.testQuest.configurations;
 import com.tq.testQuest.repositories.UserRepository;
 import com.tq.testQuest.services.CustomAuthenticationProvider;
 import com.tq.testQuest.services.CustomUserDetailService;
+import com.tq.testQuest.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,19 +20,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private CustomAuthenticationProvider authProvider;
-    @Autowired
-    private final CustomUserDetailService customUserDetailService;
+    private  CustomUserDetailService customUserDetailService;
 
     @Autowired
     public SecurityConfig(CustomUserDetailService CustomUserDetailService) {
         this.customUserDetailService = CustomUserDetailService;
     }
 
-    @Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authProvider);
-    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

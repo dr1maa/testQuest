@@ -38,7 +38,7 @@ public class MovieController {
         return ResponseEntity.ok(savedMoviesPage.getContent());
     }
 
-    @PostMapping("/favourites post")
+    @PostMapping("/favourites")
     public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
         User user = userService.findById(userId);
