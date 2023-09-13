@@ -5,6 +5,8 @@ import com.tq.testQuest.models.User;
 public interface UserService {
     User findById(User userId);
 
+    User findUserByEmail(String email);
+
     User registerUser(User user);
 
     User getUserById(Long userId);
