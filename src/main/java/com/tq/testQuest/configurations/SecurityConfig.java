@@ -1,7 +1,7 @@
 package com.tq.testQuest.configurations;
 
 import com.tq.testQuest.repositories.UserRepository;
-import com.tq.testQuest.services.UserDetailService;
+import com.tq.testQuest.services.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailService userDetailService;
+    private final CustomUserDetailService customUserDetailService;
 
     @Autowired
-    public SecurityConfig(UserDetailService userDetailService) {
-        this.userDetailService = userDetailService;
+    public SecurityConfig(CustomUserDetailService CustomUserDetailService) {
+        this.customUserDetailService = CustomUserDetailService;
     }
 
     @Bean
@@ -29,14 +29,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRep) {
-        return  userDetailService;
+    public CustomUserDetailService customUserDetailsService(UserRepository userRep) {
+        return new CustomUserDetailService(userRep);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .userDetailsService(userDetailService)
+                .userDetailsService(customUserDetailService)
                 .authorizeRequests()
                 .antMatchers("/api/users/register").permitAll()
                 .antMatchers("/api/movies/**").authenticated()
