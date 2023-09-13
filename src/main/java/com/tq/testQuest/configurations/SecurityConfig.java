@@ -1,5 +1,6 @@
 package com.tq.testQuest.configurations;
 
+import com.tq.testQuest.repositories.UserRepository;
 import com.tq.testQuest.services.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -14,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailService userDetailService; // Исправлено имя переменной
+    private final UserDetailService userDetailService;
 
     @Autowired
     public SecurityConfig(UserDetailService userDetailService) {
@@ -26,9 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-     @Bean(name = "customUserDetailService")
-    public UserDetailService userDetailService() {
-        return new UserDetailService();
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRep) {
+        return  userDetailService;
     }
 
     @Override
