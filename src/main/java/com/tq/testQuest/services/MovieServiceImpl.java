@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,16 +20,16 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private final MovieRepository movieRepository;
     @Autowired
-    private final UserRepository userRepository;
+    private final UserService userService;
     @Autowired
     private final FavoriteMovieRepository favoriteMovieRepository;
 
 
     @Autowired
-    public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository, UserService userService) {
         this.movieRepository = movieRepository;
         this.favoriteMovieRepository = favoriteMovieRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -73,7 +72,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getNonFavoriteMovies(Long userId) {
-        User user = userRepository.findById(userId);
+        User user = userService.findById(userId);
 
         List<Movie> allMovies = movieRepository.findAll();
 

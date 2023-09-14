@@ -18,10 +18,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, UserService userService) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long userId) {
-        User user = userRepository.findById(userId);
+        User user = userService.findById(userId);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
@@ -100,6 +103,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long userId) {
-        return userRepository.findById(userId);
+        return userService.findById(userId);
     }
 }
