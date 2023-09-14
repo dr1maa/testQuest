@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -30,7 +31,7 @@ public class MovieController {
     @GetMapping("/savedMovies")
     public ResponseEntity<List<Movie>> getSavedMovies(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "15") int perPage
+            @RequestParam(defaultValue = "5") int perPage
     ) {
         Pageable pageable = PageRequest.of(page - 1, perPage);
         Page<Movie> savedMoviesPage = movieService.getAllMovies(pageable);
@@ -39,28 +40,21 @@ public class MovieController {
     }
 
     @PostMapping("/favourites")
-    public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
-        Movie movie = movieService.findById(movieId);
-        User user = userService.findById(userId);
-        if (movie == null || user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Фильм или пользователь не найден");
-        }
-        FavoriteMovie existingFavorite = movieService.findFavoriteMovie(user, movie);
-        if (existingFavorite != null) {
-            return ResponseEntity.badRequest().body("Фильм уже добавлен в избранное");
-        }
-        movieService.addToFavorites(user, movie);
-        return ResponseEntity.ok("Фильм успешно добавлен в избранное");
+    public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") Long userId, @RequestBody Long movieId) {
+       Movie movie = movieService.findById(movieId);
+       User user = userService.findById(userId);
+       movieService.addToFavorites(user,movie);
+       return ResponseEntity.ok("Фильм успешно добавлен в избранное");
     }
 
-    @DeleteMapping("/favourites delete")
-    public ResponseEntity<String> removeFromFavorites(@RequestHeader("User-Id") User userId, @RequestBody Long movieId) {
+    @DeleteMapping("/favourites")
+    public ResponseEntity<String> removeFromFavorites(@RequestHeader("User-Id") Long userId, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
         User user = userService.findById(userId);
         if (movie == null || user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Фильм или пользователь не найден");
         }
-        FavoriteMovie existingFavorite = movieService.findFavoriteMovie(user, movie);
+        FavoriteMovie existingFavorite = movieService.getFavoriteMovie(user, movie);
         if (existingFavorite == null) {
             return ResponseEntity.badRequest().body("Фильм не найден в избранном");
         }
@@ -70,17 +64,17 @@ public class MovieController {
 
     @GetMapping("/nonFavoriteMovies")
     public ResponseEntity<List<Movie>> getNonFavoriteMovies(
-            @RequestHeader("User-Id") User userId,
+            @RequestHeader("User-Id") Long userId,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "15") int perPage,
-            @RequestParam String loaderType
+            @RequestParam(defaultValue = "5") int perPage,
+            @RequestParam Long movieId
     ) {
         User user = userService.findById(userId);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         Pageable pageable = PageRequest.of(page - 1, perPage);
-        List<Movie> nonFavoriteMovies = movieService.getNonFavoriteMovies(userId, pageable, loaderType);
+        List<Movie> nonFavoriteMovies = movieService.getNonFavoriteMovies(userId);
         if (nonFavoriteMovies == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

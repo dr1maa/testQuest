@@ -1,6 +1,7 @@
 package com.tq.testQuest.models;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 public class FavoriteMovie {

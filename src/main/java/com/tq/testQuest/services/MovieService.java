@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MovieService {
+
     Movie saveMovie(String title, String posterPath);
 
     Page<Movie> getAllMovies(Pageable pageable);
@@ -17,13 +19,12 @@ public interface MovieService {
 
     Movie findById(Long movieId);
 
-    FavoriteMovie findFavoriteMovie(User user, Movie movie);
+    FavoriteMovie getFavoriteMovie(User user, Movie movie);
+
+    List<Movie> getNonFavoriteMovies(Long userId);
+
 
     void addToFavorites(User user, Movie movie);
 
     void removeFromFavorites(User user, Movie movie);
-
-    void saveMovieToDatabase(String title, String posterPath);
-
-    List<Movie> getNonFavoriteMovies(User user, Pageable pageable, String loaderType);
 }
