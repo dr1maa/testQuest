@@ -1,5 +1,6 @@
 package com.tq.testQuest.services;
 
+import com.sun.xml.bind.v2.model.core.ID;
 import com.tq.testQuest.models.User;
 import com.tq.testQuest.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final UserService userService;
 
     @Autowired
-    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, UserService userService) {
+    public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
     @Override
@@ -53,12 +52,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long userId) {
-        User user = userService.findById(userId);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-        return user;
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
 
     @Override
     public User updateUserById(Long userId, User updatedUser) {
@@ -103,6 +100,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long userId) {
-        return userService.findById(userId);
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
