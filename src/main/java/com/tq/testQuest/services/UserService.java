@@ -3,7 +3,6 @@ package com.tq.testQuest.services;
 import com.tq.testQuest.models.User;
 
 public interface UserService {
-    User findById(Long userId);
 
     User findUserByEmail(String email);
 

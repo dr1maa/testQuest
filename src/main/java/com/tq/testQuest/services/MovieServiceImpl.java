@@ -72,7 +72,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> getNonFavoriteMovies(Long userId) {
-        User user = userService.findById(userId);
+        User user = userService.getUserById(userId);
 
         List<Movie> allMovies = movieRepository.findAll();
 

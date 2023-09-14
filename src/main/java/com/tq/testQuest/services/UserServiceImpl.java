@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.save(user);
     }
-
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
@@ -96,11 +95,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
