@@ -66,8 +66,7 @@ public class MovieController {
     public ResponseEntity<List<Movie>> getNonFavoriteMovies(
             @RequestHeader("User-Id") Long userId,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int perPage,
-            @RequestParam Long movieId
+            @RequestParam(defaultValue = "5") int perPage
     ) {
         User user = userService.getUserById(userId);
         if (user == null) {
