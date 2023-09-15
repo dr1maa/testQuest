@@ -11,10 +11,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -40,17 +40,24 @@ public class MovieController {
     }
 
     @PostMapping("/favourites")
-    public ResponseEntity<String> addToFavorites(@RequestHeader("User-Id") Long userId, @RequestBody Long movieId) {
-       Movie movie = movieService.findById(movieId);
-       User user = userService.getUserById(userId);
-       movieService.addToFavorites(user,movie);
-       return ResponseEntity.ok("Фильм успешно добавлен в избранное");
+    public ResponseEntity<String> addToFavorites(Authentication authentication, @RequestBody Long movieId) {
+        Movie movie = movieService.findById(movieId);
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
+        if (movie != null && user != null) {
+            movieService.addToFavorites(user, movie);
+            return ResponseEntity.ok("Фильм успешно добавлен в избранное");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Фильм или пользователь не найден");
+        }
     }
 
+
     @DeleteMapping("/favourites")
-    public ResponseEntity<String> removeFromFavorites(@RequestHeader("User-Id") Long userId, @RequestBody Long movieId) {
+    public ResponseEntity<String> removeFromFavorites(Authentication authentication, @RequestBody Long movieId) {
         Movie movie = movieService.findById(movieId);
-        User user = userService.getUserById(userId);
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
         if (movie == null || user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Фильм или пользователь не найден");
         }
