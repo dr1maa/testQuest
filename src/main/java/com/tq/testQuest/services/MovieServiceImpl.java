@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,7 +68,6 @@ public class MovieServiceImpl implements MovieService {
     }
 
 
-
     @Override
     public List<FavoriteMovie> getFavoriteMovies(Authentication authentication) {
         String username = authentication.getName();
@@ -77,19 +77,30 @@ public class MovieServiceImpl implements MovieService {
         return favoriteMovies;
     }
 
-
+    @Override
     public List<Movie> getNonFavoriteMovies(Authentication authentication) {
-
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
 
         List<Movie> allMovies = movieRepository.findAll();
 
+        List<FavoriteMovie> userFavoriteMovies = favoriteMovieRepository.findAllByUser(user);
+        Set<Long> userFavoriteMovieIds = userFavoriteMovies.stream()
+                .map(favoriteMovie -> favoriteMovie.getMovie().getId())
+                .collect(Collectors.toSet());
+
         List<Movie> nonFavoriteMovies = allMovies.stream()
-                .filter(movie -> favoriteMovieRepository.findAllByUser(user) == null)
+                .filter(movie -> !userFavoriteMovieIds.contains(movie.getId()))
                 .collect(Collectors.toList());
+
         return nonFavoriteMovies;
     }
+
+
+
+
+
+
 
     @Override
     public void addToFavorites(User user, Movie movie) {
