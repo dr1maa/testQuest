@@ -9,6 +9,7 @@ import com.tq.testQuest.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -65,21 +66,28 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findById(movieId).orElse(null);
     }
 
-    @Override
-    public FavoriteMovie getFavoriteMovie(User user, Movie movie) {
-        return favoriteMovieRepository.findByUserAndMovie(user, movie);
-    }
+
 
     @Override
-    public List<Movie> getNonFavoriteMovies(Long userId) {
-        User user = userService.getUserById(userId);
+    public List<FavoriteMovie> getFavoriteMovies(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
+
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllFavoriteMovies(user);
+        return favoriteMovies;
+    }
+
+
+    public List<Movie> getNonFavoriteMovies(Authentication authentication) {
+
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
 
         List<Movie> allMovies = movieRepository.findAll();
 
         List<Movie> nonFavoriteMovies = allMovies.stream()
-                .filter(movie -> favoriteMovieRepository.findByUserAndMovie(user, movie) == null)
+                .filter(movie -> favoriteMovieRepository.findAllFavoriteMovies(user) == null)
                 .collect(Collectors.toList());
-
         return nonFavoriteMovies;
     }
 
@@ -89,10 +97,17 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public void removeFromFavorites(User user, Movie movie) {
-        FavoriteMovie existingFavorite = favoriteMovieRepository.findByUserAndMovie(user, movie);
+    public void removeFromFavorites(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
+
+        List<FavoriteMovie> existingFavorite = favoriteMovieRepository.findAllFavoriteMovies(user);
+
         if (existingFavorite != null) {
-            favoriteMovieRepository.delete(existingFavorite);
+            for (FavoriteMovie favoriteMovie : existingFavorite) {
+                favoriteMovieRepository.delete(favoriteMovie);
+            }
         }
     }
+
 }

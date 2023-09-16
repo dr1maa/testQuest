@@ -4,6 +4,7 @@ import com.tq.testQuest.models.FavoriteMovie;
 import com.tq.testQuest.models.Movie;
 import com.tq.testQuest.models.User;
 import com.tq.testQuest.services.MovieService;
+import com.tq.testQuest.services.MovieServiceImpl;
 import com.tq.testQuest.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,11 +22,13 @@ import java.util.List;
 public class MovieController {
     private final UserService userService;
     private final MovieService movieService;
+    private final MovieServiceImpl movieServiceImpl;
 
     @Autowired
-    public MovieController(UserService userService, MovieService movieService) {
+    public MovieController(UserService userService, MovieService movieService, MovieServiceImpl movieServiceImpl) {
         this.userService = userService;
         this.movieService = movieService;
+        this.movieServiceImpl = movieServiceImpl;
     }
 
     @GetMapping("/savedMovies")
@@ -61,26 +64,27 @@ public class MovieController {
         if (movie == null || user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Фильм или пользователь не найден");
         }
-        FavoriteMovie existingFavorite = movieService.getFavoriteMovie(user, movie);
+        List<FavoriteMovie> existingFavorite = movieService.getFavoriteMovies(authentication);
         if (existingFavorite == null) {
             return ResponseEntity.badRequest().body("Фильм не найден в избранном");
         }
-        movieService.removeFromFavorites(user, movie);
+        movieService.removeFromFavorites(authentication);
         return ResponseEntity.ok("Фильм успешно удален из избранного");
     }
 
     @GetMapping("/nonFavoriteMovies")
     public ResponseEntity<List<Movie>> getNonFavoriteMovies(
-            @RequestHeader("User-Id") Long userId,
+            Authentication authentication,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int perPage
     ) {
-        User user = userService.getUserById(userId);
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         Pageable pageable = PageRequest.of(page - 1, perPage);
-        List<Movie> nonFavoriteMovies = movieService.getNonFavoriteMovies(userId);
+        List<Movie> nonFavoriteMovies = movieServiceImpl.getNonFavoriteMovies(authentication);
         if (nonFavoriteMovies == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

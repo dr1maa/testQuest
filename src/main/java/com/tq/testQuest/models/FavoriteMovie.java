@@ -46,9 +46,9 @@ public class FavoriteMovie {
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
+
     public FavoriteMovie() {
     }
-
 
 
 }

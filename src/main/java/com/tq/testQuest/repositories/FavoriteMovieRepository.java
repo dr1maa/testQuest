@@ -7,12 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 @Repository
 public interface FavoriteMovieRepository extends JpaRepository<FavoriteMovie, Long> {
 
-    FavoriteMovie findByUserAndMovie(User user, Movie movie);
+    List<FavoriteMovie> findAllFavoriteMovies(User user);
 
-    List<FavoriteMovie> findByUser(User user);
-
-    List<Movie> findFavoriteMoviesByUserId(Long id);
 }

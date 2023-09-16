@@ -5,6 +5,7 @@ import com.tq.testQuest.models.Movie;
 import com.tq.testQuest.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,12 +20,11 @@ public interface MovieService {
 
     Movie findById(Long movieId);
 
-    FavoriteMovie getFavoriteMovie(User user, Movie movie);
+    List<FavoriteMovie> getFavoriteMovies(Authentication authentication);
 
-    List<Movie> getNonFavoriteMovies(Long userId);
-
+    List<Movie> getNonFavoriteMovies(Authentication authentication);
 
     void addToFavorites(User user, Movie movie);
 
-    void removeFromFavorites(User user, Movie movie);
+    void removeFromFavorites(Authentication authentication);
 }
