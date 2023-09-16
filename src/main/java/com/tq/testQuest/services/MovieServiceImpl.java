@@ -73,7 +73,7 @@ public class MovieServiceImpl implements MovieService {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
 
-        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllFavoriteMovies(user);
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByUser(user);
         return favoriteMovies;
     }
 
@@ -86,7 +86,7 @@ public class MovieServiceImpl implements MovieService {
         List<Movie> allMovies = movieRepository.findAll();
 
         List<Movie> nonFavoriteMovies = allMovies.stream()
-                .filter(movie -> favoriteMovieRepository.findAllFavoriteMovies(user) == null)
+                .filter(movie -> favoriteMovieRepository.findAllByUser(user) == null)
                 .collect(Collectors.toList());
         return nonFavoriteMovies;
     }
@@ -101,7 +101,7 @@ public class MovieServiceImpl implements MovieService {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
 
-        List<FavoriteMovie> existingFavorite = favoriteMovieRepository.findAllFavoriteMovies(user);
+        List<FavoriteMovie> existingFavorite = favoriteMovieRepository.findAllByUser(user);
 
         if (existingFavorite != null) {
             for (FavoriteMovie favoriteMovie : existingFavorite) {
