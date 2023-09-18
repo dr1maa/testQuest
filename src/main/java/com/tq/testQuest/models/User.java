@@ -67,10 +67,6 @@ public class User {
     }
 
 
-    public Long getId() {
-        return id;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -83,9 +79,6 @@ public class User {
         this.username = username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public void setName(String name) {
         this.name = name;

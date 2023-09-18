@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MovieService {
 
@@ -16,7 +15,6 @@ public interface MovieService {
 
     Page<Movie> getAllMovies(Pageable pageable);
 
-    Movie deleteMovie(Long movieId);
 
     Movie findById(Long movieId);
 

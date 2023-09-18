@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -50,16 +49,6 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Page<Movie> getAllMovies(Pageable pageable) {
         return movieRepository.findAll(pageable);
-    }
-
-    @Override
-    public Movie deleteMovie(Long movieId) {
-        if (!movieRepository.existsById(movieId)) {
-            throw new EntityNotFoundException("Фильм не найден");
-        }
-
-        movieRepository.deleteById(movieId);
-        return null;
     }
 
     @Override

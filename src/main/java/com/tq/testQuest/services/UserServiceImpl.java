@@ -1,12 +1,10 @@
 package com.tq.testQuest.services;
 
-import com.sun.xml.bind.v2.model.core.ID;
 import com.tq.testQuest.models.User;
 import com.tq.testQuest.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.tq.testQuest.models.Enum.Role;
 
 import java.util.HashSet;
@@ -49,6 +47,7 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.save(user);
     }
+
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
