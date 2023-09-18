@@ -72,7 +72,6 @@ public class MovieServiceImpl implements MovieService {
     public List<FavoriteMovie> getFavoriteMovies(Authentication authentication) {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
-
         List<FavoriteMovie> favoriteMovies = favoriteMovieRepository.findAllByUser(user);
         return favoriteMovies;
     }
@@ -95,11 +94,6 @@ public class MovieServiceImpl implements MovieService {
 
         return nonFavoriteMovies;
     }
-
-
-
-
-
 
 
     @Override

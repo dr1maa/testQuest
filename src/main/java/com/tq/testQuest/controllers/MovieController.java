@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -90,4 +91,22 @@ public class MovieController {
         }
         return ResponseEntity.ok(nonFavoriteMovies);
     }
+    @GetMapping("/favorites")
+    public ResponseEntity<List<Movie>> getFavoriteMovies(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.getUserByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<FavoriteMovie> favoriteMovies = movieService.getFavoriteMovies(authentication);
+
+        List<Movie> favoriteMovieList = favoriteMovies.stream()
+                .map(FavoriteMovie::getMovie)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(favoriteMovieList);
+    }
+
 }
