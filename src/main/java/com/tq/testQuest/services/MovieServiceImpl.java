@@ -13,11 +13,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class MovieServiceImpl implements MovieService {
+
     @Autowired
     private final MovieRepository movieRepository;
     @Autowired
@@ -25,25 +27,11 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     private final FavoriteMovieRepository favoriteMovieRepository;
 
-
     @Autowired
     public MovieServiceImpl(MovieRepository movieRepository, FavoriteMovieRepository favoriteMovieRepository, UserRepository userRepository, UserService userService) {
         this.movieRepository = movieRepository;
         this.favoriteMovieRepository = favoriteMovieRepository;
         this.userService = userService;
-    }
-
-    @Override
-    public Movie saveMovie(String title, String posterPath) {
-        if (title.isEmpty() || posterPath.isEmpty()) {
-            throw new IllegalArgumentException("Недостаточно данных для сохранения фильма");
-        }
-
-        Movie movie = new Movie();
-        movie.setTitle(title);
-        movie.setPosterPath(posterPath);
-
-        return movieRepository.save(movie);
     }
 
     @Override
@@ -56,7 +44,6 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findById(movieId).orElse(null);
     }
 
-
     @Override
     public List<FavoriteMovie> getFavoriteMovies(Authentication authentication) {
         String username = authentication.getName();
@@ -66,7 +53,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> getNonFavoriteMovies(Authentication authentication) {
+    public List<Movie> getNonFavoriteMovies(Authentication authentication, Pageable pageable) {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
 
@@ -74,16 +61,16 @@ public class MovieServiceImpl implements MovieService {
 
         List<FavoriteMovie> userFavoriteMovies = favoriteMovieRepository.findAllByUser(user);
         Set<Long> userFavoriteMovieIds = userFavoriteMovies.stream()
-                .map(favoriteMovie -> favoriteMovie.getMovie().getId())
-                .collect(Collectors.toSet());
+            .map(favoriteMovie -> favoriteMovie.getMovie().getId())
+            .collect(Collectors.toSet());
 
         List<Movie> nonFavoriteMovies = allMovies.stream()
-                .filter(movie -> !userFavoriteMovieIds.contains(movie.getId()))
-                .collect(Collectors.toList());
+            .filter(movie -> !userFavoriteMovieIds.contains(movie.getId()))
+            .limit(pageable.getPageSize())
+            .collect(Collectors.toList());
 
         return nonFavoriteMovies;
     }
-
 
     @Override
     public void addToFavorites(User user, Movie movie) {
@@ -102,6 +89,16 @@ public class MovieServiceImpl implements MovieService {
                 favoriteMovieRepository.delete(favoriteMovie);
             }
         }
+    }
+
+    @Override
+    public void saveMovie(Movie movie) {
+        movieRepository.save(movie);
+    }
+
+    @Override
+    public Optional<Movie> findByTitle(String title) {
+        return movieRepository.findByTitle(title);
     }
 
 }

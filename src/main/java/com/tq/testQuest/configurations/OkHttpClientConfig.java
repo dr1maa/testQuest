@@ -11,4 +11,5 @@ public class OkHttpClientConfig {
     public OkHttpClient okHttpClient() {
         return new OkHttpClient();
     }
+
 }

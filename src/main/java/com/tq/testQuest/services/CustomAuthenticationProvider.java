@@ -25,7 +25,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String email = authentication.getName();
+        String email = authentication.getName(); //Как и почему это работает????
         String password = authentication.getCredentials().toString();
 
         User user = userService.findUserByEmail(email);
@@ -38,7 +38,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-
         return new UsernamePasswordAuthenticationToken(email, password, authorities);
     }
 
@@ -46,4 +45,5 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
+
 }

@@ -13,12 +13,6 @@ public class Movie {
     private String title;
 
     private String posterPath;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Column(name = "not_in_favorites")
-    private boolean notInFavorites;
 
     public Long getId() {
         return id;
@@ -44,20 +38,11 @@ public class Movie {
         this.posterPath = posterPath;
     }
 
-    public boolean isNotInFavorites() {
-        return notInFavorites;
-    }
-
-    public void setNotInFavorites(boolean notInFavorites) {
-        this.notInFavorites = notInFavorites;
-    }
-
     public Movie() {
     }
 
-    public Movie(String title, String posterPath, boolean notInFavorites) {
+    public Movie(String title, String posterPath) {
         this.title = title;
         this.posterPath = posterPath;
-        this.notInFavorites = notInFavorites;
     }
 }

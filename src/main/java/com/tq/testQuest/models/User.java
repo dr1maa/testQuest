@@ -2,7 +2,6 @@ package com.tq.testQuest.models;
 
 import com.tq.testQuest.models.Enum.Role;
 
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -32,7 +31,7 @@ public class User {
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"))
+                     joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
@@ -40,7 +39,6 @@ public class User {
 
         this.id = null;
     }
-
 
     public User(Long id, String email, String username, String name, String password, Set<Role> roles) {
         this.id = id;
@@ -50,6 +48,7 @@ public class User {
         this.password = password;
         this.roles = roles;
     }
+
     public String getPassword() {
         return password;
     }
@@ -66,7 +65,6 @@ public class User {
         this.roles = roles;
     }
 
-
     public String getUsername() {
         return username;
     }
@@ -79,15 +77,12 @@ public class User {
         this.username = username;
     }
 
-
     public void setName(String name) {
         this.name = name;
     }
 
-
     public String getEmail() {
         return email;
     }
-
 
 }

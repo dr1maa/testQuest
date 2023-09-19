@@ -15,19 +15,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private  CustomUserDetailService customUserDetailService;
+
+    private final CustomUserDetailService customUserDetailService;
 
     @Autowired
     public SecurityConfig(CustomUserDetailService CustomUserDetailService) {
         this.customUserDetailService = CustomUserDetailService;
     }
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,12 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .userDetailsService(customUserDetailService)
-                .authorizeRequests()
-                .antMatchers("/api/users/register").permitAll()
-                .antMatchers("/api/movies/**").authenticated()
-                .and()
-                .httpBasic();
+            .userDetailsService(customUserDetailService)
+            .authorizeRequests()
+            .antMatchers("/api/users/register").permitAll()
+            .antMatchers("/api/movies/**").authenticated()
+            .and()
+            .httpBasic();
         http.csrf().disable();
     }
+
 }

@@ -8,21 +8,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MovieService {
 
-    Movie saveMovie(String title, String posterPath);
-
     Page<Movie> getAllMovies(Pageable pageable);
-
 
     Movie findById(Long movieId);
 
     List<FavoriteMovie> getFavoriteMovies(Authentication authentication);
 
-    List<Movie> getNonFavoriteMovies(Authentication authentication);
+    List<Movie> getNonFavoriteMovies(Authentication authentication, Pageable pageable);
 
     void addToFavorites(User user, Movie movie);
 
     void removeFromFavorites(Authentication authentication);
+
+    void saveMovie(Movie movie);
+
+    Optional<Movie> findByTitle(String title);
+
 }

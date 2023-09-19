@@ -7,12 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tq.testQuest.models.Movie;
 import com.tq.testQuest.repositories.MovieRepository;
 import com.tq.testQuest.services.MovieService;
+import lombok.extern.log4j.Log4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 
 import java.io.IOException;
 import java.util.Optional;
@@ -20,23 +19,20 @@ import java.util.Set;
 
 @Component
 public class MovieJob {
-    @Autowired
+
+    public static final String RESULTS = "results";
+    public static final String TITLE = "title";
+    public static final String POSTER_PATH = "poster_path";
     private final ObjectMapper objectMapper;
-    private final Set<String> savedMovieTitles;
-    private final MovieRepository movieRepository;
     private final DiscoverClient discoverClient;
     private final MovieService movieService;
 
     @Autowired
-    public MovieJob(ObjectMapper objectMapper, Set<String> savedMovieTitles, MovieRepository movieRepository, DiscoverClient discoverClient, MovieService movieService) {
-
+    public MovieJob(ObjectMapper objectMapper, DiscoverClient discoverClient, MovieService movieService) {
         this.objectMapper = objectMapper;
-        this.savedMovieTitles = savedMovieTitles;
-        this.movieRepository = movieRepository;
         this.discoverClient = discoverClient;
         this.movieService = movieService;
     }
-
 
     @Scheduled(fixedRate = 3 * 60 * 60 * 1000)
     void fetchMoviesAndSave() throws IOException {
@@ -45,10 +41,8 @@ public class MovieJob {
         }
     }
 
-
     private void fetchAndSaveMoviesFromPage(int page) throws IOException {
-        Response response = discoverClient.fetchDiscoverData();
-
+        Response response = discoverClient.fetchDiscoverData(page);
 
         if (response.isSuccessful()) {
             String responseBody = response.body().string();
@@ -62,24 +56,24 @@ public class MovieJob {
         try {
             JsonNode jsonNode = objectMapper.readTree(responseBody);
 
-            JsonNode results = jsonNode.get("results");
+            JsonNode results = jsonNode.get(RESULTS);
 
             if (results != null && results.isArray()) {
                 for (JsonNode movieNode : results) {
-                    String title = movieNode.get("title").asText();
-                    String posterPath = movieNode.get("poster_path").asText();
+                    String title = movieNode.get(TITLE).asText();
+                    String posterPath = movieNode.get(POSTER_PATH).asText();
 
-                    Optional<Movie> existingMovieOptional = movieRepository.findByTitle(title);
+                    Optional<Movie> existingMovieOptional = movieService.findByTitle(title);
 
                     if (existingMovieOptional.isPresent()) {
                         Movie existingMovie = existingMovieOptional.get();
                         existingMovie.setPosterPath(posterPath);
-                        movieRepository.save(existingMovie);
+                        movieService.saveMovie(existingMovie);
                     } else {
                         Movie newMovie = new Movie();
                         newMovie.setTitle(title);
                         newMovie.setPosterPath(posterPath);
-                        movieRepository.save(newMovie);
+                        movieService.saveMovie(newMovie);
                     }
                 }
             }
@@ -89,4 +83,5 @@ public class MovieJob {
             throw new RuntimeException(e);
         }
     }
+
 }

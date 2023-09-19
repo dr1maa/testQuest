@@ -10,12 +10,10 @@ import com.tq.testQuest.models.Enum.Role;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Autowired
@@ -49,27 +47,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-
-    @Override
-    public User updateUserById(Long userId, User updatedUser) {
-        User existingUser = getUserById(userId);
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setName(updatedUser.getName());
-        return userRepository.save(existingUser);
-    }
-
-    @Override
-    public void deleteUser(Long userId) {
-        User existingUser = getUserById(userId);
-        userRepository.delete(existingUser);
-    }
-
-    @Override
     public User updateUserByUsername(String username, User updatedUser) {
         User existingUser = userRepository.findByUsername(username);
         if (existingUser == null) {
@@ -95,4 +72,5 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
 }

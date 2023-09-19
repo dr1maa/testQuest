@@ -8,8 +8,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 
 @Configuration
 public class AuthConfig {
+
     @Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth, UserService userService) throws Exception {
+    public void configAuthentication(AuthenticationManagerBuilder auth, UserService userService) {
         auth.authenticationProvider(new CustomAuthenticationProvider(userService));
     }
+
 }

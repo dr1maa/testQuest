@@ -50,5 +50,4 @@ public class FavoriteMovie {
     public FavoriteMovie() {
     }
 
-
 }

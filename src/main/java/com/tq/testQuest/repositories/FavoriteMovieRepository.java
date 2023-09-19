@@ -10,7 +10,9 @@ import java.util.List;
 
 @Repository
 public interface FavoriteMovieRepository extends JpaRepository<FavoriteMovie, Long> {
+
     List<FavoriteMovie> findAllByUser(User user);
+
 }
 
 

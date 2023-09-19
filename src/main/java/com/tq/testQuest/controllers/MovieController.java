@@ -23,13 +23,11 @@ import java.util.stream.Collectors;
 public class MovieController {
     private final UserService userService;
     private final MovieService movieService;
-    private final MovieServiceImpl movieServiceImpl;
 
     @Autowired
     public MovieController(UserService userService, MovieService movieService, MovieServiceImpl movieServiceImpl) {
         this.userService = userService;
         this.movieService = movieService;
-        this.movieServiceImpl = movieServiceImpl;
     }
 
     @GetMapping("/savedMovies")
@@ -82,12 +80,12 @@ public class MovieController {
         String username = authentication.getName();
         User user = userService.getUserByUsername(username);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         Pageable pageable = PageRequest.of(page - 1, perPage);
-        List<Movie> nonFavoriteMovies = movieServiceImpl.getNonFavoriteMovies(authentication);
+        List<Movie> nonFavoriteMovies = movieService.getNonFavoriteMovies(authentication, pageable);
         if (nonFavoriteMovies == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(nonFavoriteMovies);
     }
@@ -97,7 +95,7 @@ public class MovieController {
         User user = userService.getUserByUsername(username);
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         List<FavoriteMovie> favoriteMovies = movieService.getFavoriteMovies(authentication);

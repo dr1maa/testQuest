@@ -1,22 +1,17 @@
-    package com.tq.testQuest.services;
+package com.tq.testQuest.services;
 
-    import com.tq.testQuest.models.User;
+import com.tq.testQuest.models.User;
 
-    public interface UserService {
+public interface UserService {
 
-        User findUserByEmail(String email);
+    User findUserByEmail(String email);
 
-        User registerUser(User user);
+    User registerUser(User user);
 
-        User getUserById(Long userId);
+    User updateUserByUsername(String username, User updatedUser);
 
-        User updateUserById(Long userId, User updatedUser);
+    void deleteUserByUsername(String username);
 
-        void deleteUser(Long userId);
+    User getUserByUsername(String username);
 
-        User updateUserByUsername(String username, User updatedUser);
-
-        void deleteUserByUsername(String username);
-
-        User getUserByUsername(String username);
-    }
+}
